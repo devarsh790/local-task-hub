@@ -1,19 +1,704 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="dark">
 <head>
-  <title>LocalTaskHub</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student TaskHub - Interactive Quests, Daily Coins & Store</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Confetti Canvas Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>LocalTaskHub - Submit a Task</h1>
-  <form id="taskForm">
-    <input type="text" id="name" placeholder="Your Name" required />
-    <input type="text" id="task" placeholder="Task Description" required />
-    <button type="submit">Submit</button>
-  </form>
 
-  <p id="msg"></p>
+  <!-- LOGIN / ROLE OVERLAY -->
+  <div class="login-overlay active" id="loginOverlay">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="brand-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+        <h2>Student QuestHub</h2>
+        <p class="text-muted">Interactive Quests, Math Quizzes, Photo Uploads & Store</p>
+      </div>
 
-<script src="script.js"></script>
+      <!-- Role Selector Tabs -->
+      <div class="role-selector-tabs">
+        <button class="role-tab active" id="studentRoleTab" onclick="switchLoginRole('student')">
+          <i class="fa-solid fa-user-graduate"></i> Student Login
+        </button>
+        <button class="role-tab" id="adminRoleTab" onclick="switchLoginRole('admin')">
+          <i class="fa-solid fa-user-shield"></i> Admin Portal
+        </button>
+      </div>
+
+      <!-- Student Login Form -->
+      <form id="studentLoginForm" class="login-form active">
+        <div class="form-group">
+          <label>Student Name</label>
+          <input type="text" id="loginStudentName" value="Alex Chen" required>
+        </div>
+        <div class="form-group">
+          <label>Academic Major</label>
+          <input type="text" id="loginStudentMajor" value="Computer Science & Engineering" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 mt-3">
+          <i class="fa-solid fa-right-to-bracket"></i> Enter Student Dashboard
+        </button>
+      </form>
+
+      <!-- Admin Login Form -->
+      <form id="adminLoginForm" class="login-form">
+        <div class="form-group">
+          <label>Admin Username</label>
+          <input type="text" id="adminUser" value="admin" required>
+        </div>
+        <div class="form-group">
+          <label>Admin Password</label>
+          <input type="password" id="adminPass" value="admin123" required>
+        </div>
+        <button type="submit" class="btn btn-gold w-100 mt-3">
+          <i class="fa-solid fa-lock"></i> Enter Admin Control Center
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- APPLICATION NAVIGATION HEADER -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+        <div class="brand-text">
+          <span class="brand-name">TaskHub <span class="brand-badge" id="roleHeaderBadge">STUDENT</span></span>
+          <span class="brand-sub">Quests, Daily Coins & Rewards</span>
+        </div>
+      </div>
+
+      <!-- Live Player Stats Bar -->
+      <div class="user-stats-bar" id="studentHeaderStats">
+        <button class="daily-reward-pill-btn" id="claimDailyBtn" onclick="claimDailyReward()" title="Claim Daily Login Coins">
+          <i class="fa-solid fa-gift text-gold"></i>
+          <span id="dailyBtnText">Daily Reward (+100 Coins)</span>
+        </button>
+
+        <div class="stat-pill coin-pill" id="coinCounterPill" title="Your Redeemable Student Coins">
+          <div class="coin-icon-wrapper"><i class="fa-solid fa-coins coin-spin"></i></div>
+          <div class="pill-data">
+            <span class="pill-label">COIN BALANCE</span>
+            <span class="pill-value" id="userCoinBalance">1,250</span>
+          </div>
+        </div>
+
+        <div class="stat-pill streak-pill" title="Daily Task Streak">
+          <i class="fa-solid fa-fire streak-fire"></i>
+          <div class="pill-data">
+            <span class="pill-label">STREAK</span>
+            <span class="pill-value" id="userStreak">5 Days</span>
+          </div>
+        </div>
+
+        <button class="btn btn-secondary btn-sm" onclick="openLoginOverlay()" title="Switch Role">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Switch User
+        </button>
+
+        <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme">
+          <i class="fa-solid fa-moon" id="themeIcon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <div class="app-layout">
+
+    <!-- STUDENT VIEW PANEL -->
+    <div id="studentView" class="view-panel active">
+
+      <!-- HERO BANNER -->
+      <section class="hero-section">
+        <div class="hero-content">
+          <div class="welcome-text">
+            <h1 id="welcomeHeading">Hello, Alex! Complete quests for rewards! 👋</h1>
+            <p>Solve <strong>Math Quizzes</strong>, upload <strong>Photo Proofs</strong> of study items, write <strong>Paragraph Essays</strong>, or create <strong>Drawings</strong> to earn Task Coins!</p>
+          </div>
+          
+          <div class="xp-container">
+            <div class="xp-header">
+              <span><i class="fa-solid fa-star text-gold"></i> Level <span id="xpLevelNum">2</span> Progress</span>
+              <span id="xpTextDisplay">420 / 1000 XP</span>
+            </div>
+            <div class="xp-bar-track">
+              <div class="xp-bar-fill" id="xpBarFill" style="width: 42%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon bg-gold-glow"><i class="fa-solid fa-coins"></i></div>
+            <div class="metric-info">
+              <span class="metric-val" id="metricCoins">1,250</span>
+              <span class="metric-lbl">Available Coins</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon bg-purple-glow"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="metric-info">
+              <span class="metric-val" id="metricTotalEarned">2,450</span>
+              <span class="metric-lbl">Lifetime Coins</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon bg-blue-glow"><i class="fa-solid fa-list-check"></i></div>
+            <div class="metric-info">
+              <span class="metric-val" id="metricPendingTasks">4</span>
+              <span class="metric-lbl">Active Quests</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon bg-green-glow"><i class="fa-solid fa-gift"></i></div>
+            <div class="metric-info">
+              <span class="metric-val" id="metricClaimsCount">2</span>
+              <span class="metric-lbl">Rewards Claimed</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Navigation Tabs -->
+      <nav class="navigation-tabs">
+        <button class="nav-tab active" data-tab="tasks">
+          <i class="fa-solid fa-tasks"></i> Quest Board <span class="tab-badge" id="taskTabBadge">4</span>
+        </button>
+        <button class="nav-tab" data-tab="rewards">
+          <i class="fa-solid fa-store"></i> Rewards Store <span class="tab-badge gold" id="rewardsTabBadge">8</span>
+        </button>
+        <button class="nav-tab" data-tab="inventory">
+          <i class="fa-solid fa-box-open"></i> My Inventory & Claims <span class="tab-badge blue" id="claimsTabBadge">2</span>
+        </button>
+        <button class="nav-tab" data-tab="profile">
+          <i class="fa-solid fa-user-graduate"></i> Profile & Achievements
+        </button>
+      </nav>
+
+      <!-- TAB 1: INTERACTIVE QUEST BOARD -->
+      <section class="tab-panel active" id="tasks-panel">
+        
+        <!-- Interactive Presets Bar -->
+        <div class="preset-tasks-wrapper">
+          <span class="preset-label"><i class="fa-solid fa-lightbulb text-gold"></i> Interactive Quest Modules:</span>
+          <div class="preset-chips">
+            <button class="preset-chip" onclick="openInteractiveTaskModal('quiz')">
+              <i class="fa-solid fa-calculator"></i> Basic Math Quiz <span>⚡ +200 Coins</span>
+            </button>
+            <button class="preset-chip" onclick="openInteractiveTaskModal('photo')">
+              <i class="fa-solid fa-camera"></i> Capture & Upload 10 Desk Items <span>⚡ +250 Coins</span>
+            </button>
+            <button class="preset-chip" onclick="openInteractiveTaskModal('paragraph')">
+              <i class="fa-solid fa-pen-nib"></i> Write 100-Word Essay <span>⚡ +180 Coins</span>
+            </button>
+            <button class="preset-chip" onclick="openInteractiveTaskModal('drawing')">
+              <i class="fa-solid fa-paintbrush"></i> Draw Science Diagram <span>⚡ +220 Coins</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Task Filters -->
+        <div class="filter-action-bar">
+          <div class="search-box">
+            <i class="fa-solid fa-search"></i>
+            <input type="text" id="taskSearchInput" placeholder="Search quests, math quizzes or photo tasks...">
+          </div>
+
+          <div class="filter-group">
+            <select id="categoryFilter" class="filter-select">
+              <option value="All">All Categories</option>
+              <option value="Academic">🎓 Academic</option>
+              <option value="General">📌 General</option>
+              <option value="Fitness">🏋️ Fitness</option>
+              <option value="Coding">💻 Coding</option>
+            </select>
+
+            <select id="statusFilter" class="filter-select">
+              <option value="All">All Tasks</option>
+              <option value="Pending">⏳ Pending</option>
+              <option value="Completed">✅ Completed</option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary" id="openAddTaskModalBtn">
+            <i class="fa-solid fa-plus"></i> Add Custom Task
+          </button>
+        </div>
+
+        <!-- Tasks Grid -->
+        <div class="tasks-grid" id="tasksGrid"></div>
+      </section>
+
+      <!-- TAB 2: REWARDS STORE -->
+      <section class="tab-panel" id="rewards-panel">
+        <div class="market-banner">
+          <div class="market-banner-text">
+            <h2>🎁 Student Rewards Marketplace</h2>
+            <p>Exchange task coins for physical items (Books, T-Shirts, Headphones, Backpacks, Tumblers) & digital vouchers!</p>
+          </div>
+          <div class="market-coin-display">
+            <span class="lbl">YOUR BALANCE</span>
+            <span class="val" id="shopUserCoins">🪙 1,250</span>
+          </div>
+        </div>
+
+        <div class="shop-filter-bar">
+          <button class="shop-cat-btn active" data-cat="All">All Rewards</button>
+          <button class="shop-cat-btn" data-cat="Books & Study">📚 Books & Study</button>
+          <button class="shop-cat-btn" data-cat="Tech & Audio">🎧 Tech & Audio</button>
+          <button class="shop-cat-btn" data-cat="Apparel">👕 Apparel & Gear</button>
+          <button class="shop-cat-btn" data-cat="Gear">🎒 Backpacks & Flasks</button>
+          <button class="shop-cat-btn" data-cat="Vouchers">🎟️ Vouchers & Passes</button>
+        </div>
+
+        <div class="rewards-grid" id="rewardsGrid"></div>
+      </section>
+
+      <!-- TAB 3: INVENTORY PANEL -->
+      <section class="tab-panel" id="inventory-panel">
+        <div class="panel-header mb-4">
+          <h2>📦 My Claimed Inventory & Orders</h2>
+          <p>View your purchase history, item worth, tracking codes, and shipping status.</p>
+        </div>
+        <div class="claims-list" id="claimsList"></div>
+      </section>
+
+      <!-- TAB 4: PROFILE PANEL -->
+      <section class="tab-panel" id="profile-panel">
+        <div class="profile-layout">
+          <div class="profile-card">
+            <div class="avatar-wrapper">
+              <div class="avatar-circle"><i class="fa-solid fa-user-graduate"></i></div>
+              <span class="level-badge-overlay" id="profileLevelOverlay">Lv. 2</span>
+            </div>
+            <h3 id="profileNameDisplay">Alex Chen</h3>
+            <p class="profile-sub" id="profileMajorDisplay">Computer Science & Engineering</p>
+            <p class="profile-id"><i class="fa-solid fa-id-card"></i> <span id="profileIdDisplay">STU-2026-9482</span></p>
+
+            <hr class="divider">
+
+            <div class="profile-quick-stats">
+              <div class="p-stat"><span class="p-num" id="pCoins">1,250</span><span class="p-lbl">Coins Balance</span></div>
+              <div class="p-stat"><span class="p-num" id="pStreak">5</span><span class="p-lbl">Streak Days</span></div>
+              <div class="p-stat"><span class="p-num" id="pBadgesCount">4</span><span class="p-lbl">Badges</span></div>
+            </div>
+
+            <form id="editProfileForm" class="edit-profile-form">
+              <h4>Edit Student Details</h4>
+              <div class="form-group"><label>Student Name</label><input type="text" id="editName" required></div>
+              <div class="form-group"><label>Academic Major</label><input type="text" id="editMajor" required></div>
+              <div class="form-group"><label>Campus Room Address</label><input type="text" id="editAddress" required></div>
+              <div class="form-group"><label>Contact Phone</label><input type="text" id="editPhone" required></div>
+              <button type="submit" class="btn btn-secondary w-100">Save Profile Updates</button>
+            </form>
+          </div>
+
+          <div class="achievements-section">
+            <h3>🏆 Student Badges & Trophies</h3>
+            <div class="badges-grid" id="badgesGrid"></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ADMIN VIEW PANEL -->
+    <div id="adminView" class="view-panel">
+      <div class="admin-header-card mb-4">
+        <div>
+          <h2><i class="fa-solid fa-user-shield text-gold"></i> Admin Management Portal</h2>
+          <p class="text-muted">Create custom tasks with coin points, publish store items, and inspect student task proofs.</p>
+        </div>
+        <button class="btn btn-secondary" onclick="openLoginOverlay()">Exit Admin Portal</button>
+      </div>
+
+      <div class="admin-grid">
+        <div class="admin-forms-col">
+          
+          <!-- Admin Create Task -->
+          <div class="admin-card">
+            <h3><i class="fa-solid fa-plus-circle text-gold"></i> Add New Task (Admin)</h3>
+            <form id="adminAddTaskForm">
+              <div class="form-group">
+                <label>Task Title *</label>
+                <input type="text" id="adminTaskTitle" placeholder="e.g. Prepare Organic Chemistry Notes" required>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Category</label>
+                  <select id="adminTaskCategory">
+                    <option value="Academic">Academic</option>
+                    <option value="General">General</option>
+                    <option value="Fitness">Fitness</option>
+                    <option value="Coding">Coding</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Task Type</label>
+                  <select id="adminTaskType">
+                    <option value="standard">Standard Complete</option>
+                    <option value="quiz">Interactive Math Quiz</option>
+                    <option value="photo">Photo Upload</option>
+                    <option value="paragraph">Paragraph Essay</option>
+                    <option value="drawing">Drawing Sketch</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Coin Points Reward 🪙</label>
+                  <input type="number" id="adminTaskCoins" value="150" min="10" max="2000" required>
+                </div>
+                <div class="form-group">
+                  <label>Difficulty</label>
+                  <select id="adminTaskDifficulty">
+                    <option value="Easy">Easy</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="Hard">Hard</option>
+                    <option value="Epic">Epic</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Instructions / Description</label>
+                <textarea id="adminTaskDesc" rows="2" placeholder="Task requirements for students..."></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary w-100"><i class="fa-solid fa-check"></i> Add Task to Board</button>
+            </form>
+          </div>
+
+          <!-- Admin Store Item -->
+          <div class="admin-card">
+            <h3><i class="fa-solid fa-gift text-gold"></i> Add Store Item (Admin)</h3>
+            <form id="adminAddRewardForm">
+              <div class="form-group"><label>Item Title *</label><input type="text" id="adminRewardTitle" placeholder="e.g. Smart Fitness Band" required></div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Category</label>
+                  <select id="adminRewardCategory">
+                    <option value="Books & Study">Books & Study</option>
+                    <option value="Tech & Audio">Tech & Audio</option>
+                    <option value="Apparel">Apparel</option>
+                    <option value="Gear">Gear</option>
+                    <option value="Vouchers">Vouchers</option>
+                  </select>
+                </div>
+                <div class="form-group"><label>Point Cost 🪙 *</label><input type="number" id="adminRewardCoins" value="1200" required></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>Stock</label><input type="number" id="adminRewardStock" value="15" required></div>
+                <div class="form-group"><label>Badge Tag</label><input type="text" id="adminRewardBadge" value="FEATURED"></div>
+              </div>
+              <div class="form-group"><label>Image Path / URL</label><input type="text" id="adminRewardImage" value="assets/reward_backpack.png"></div>
+              <div class="form-group"><label>Description</label><textarea id="adminRewardDesc" rows="2"></textarea></div>
+              <button type="submit" class="btn btn-gold w-100"><i class="fa-solid fa-store"></i> Publish Reward Item</button>
+            </form>
+          </div>
+
+        </div>
+
+        <!-- Right: Admin Claims & Student Submissions -->
+        <div class="admin-orders-col">
+          <!-- Student Task Proofs Review -->
+          <div class="admin-card mb-4">
+            <h3><i class="fa-solid fa-file-invoice text-gold"></i> Student Submitted Task Proofs</h3>
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Student Name</th>
+                    <th>Task Title</th>
+                    <th>Proof Type</th>
+                    <th>Earned Coins</th>
+                    <th>Submission Proof / Content</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody id="adminSubmissionsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- All Orders & Claims -->
+          <div class="admin-card">
+            <h3><i class="fa-solid fa-boxes-packing text-gold"></i> All Student Orders & Shipping</h3>
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Order Code</th>
+                    <th>Student Name</th>
+                    <th>Item Claimed</th>
+                    <th>Worth (Coins)</th>
+                    <th>Address & Phone</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="adminClaimsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- INTERACTIVE TASK MODAL 1: BASIC MATH QUIZ -->
+  <div class="modal-backdrop" id="quizTaskModal">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-calculator text-gold"></i> Basic Math & Science Quiz</h3>
+        <button class="modal-close" onclick="closeModal('quizTaskModal')">&times;</button>
+      </div>
+
+      <div class="quiz-container" id="quizContent">
+        <p class="text-muted mb-3">Answer all 5 quick questions correctly to claim <strong>⚡ 200 Task Coins</strong>!</p>
+        <form id="mathQuizForm">
+          <div class="quiz-q-card">
+            <strong>Q1: What is 15 × 8 + 35?</strong>
+            <div class="quiz-options">
+              <label><input type="radio" name="q1" value="145"> 145</label>
+              <label><input type="radio" name="q1" value="155"> 155 (Correct)</label>
+              <label><input type="radio" name="q1" value="160"> 160</label>
+            </div>
+          </div>
+
+          <div class="quiz-q-card">
+            <strong>Q2: If a car travels at 60 mph for 2.5 hours, how far does it go?</strong>
+            <div class="quiz-options">
+              <label><input type="radio" name="q2" value="120"> 120 Miles</label>
+              <label><input type="radio" name="q2" value="150"> 150 Miles (Correct)</label>
+              <label><input type="radio" name="q2" value="180"> 180 Miles</label>
+            </div>
+          </div>
+
+          <div class="quiz-q-card">
+            <strong>Q3: Solve for x: 3x + 12 = 45</strong>
+            <div class="quiz-options">
+              <label><input type="radio" name="q3" value="11"> x = 11 (Correct)</label>
+              <label><input type="radio" name="q3" value="13"> x = 13</label>
+              <label><input type="radio" name="q3" value="15"> x = 15</label>
+            </div>
+          </div>
+
+          <div class="quiz-q-card">
+            <strong>Q4: What is 20% of 450?</strong>
+            <div class="quiz-options">
+              <label><input type="radio" name="q4" value="80"> 80</label>
+              <label><input type="radio" name="q4" value="90"> 90 (Correct)</label>
+              <label><input type="radio" name="q4" value="100"> 100</label>
+            </div>
+          </div>
+
+          <div class="quiz-q-card">
+            <strong>Q5: What comes next in sequence: 2, 6, 12, 20, 30, __?</strong>
+            <div class="quiz-options">
+              <label><input type="radio" name="q5" value="40"> 40</label>
+              <label><input type="radio" name="q5" value="42"> 42 (Correct)</label>
+              <label><input type="radio" name="q5" value="44"> 44</label>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('quizTaskModal')">Cancel</button>
+            <button type="submit" class="btn btn-gold"><i class="fa-solid fa-check-circle"></i> Submit Answers & Claim 200 Coins</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE TASK MODAL 2: CAPTURE & UPLOAD PHOTO OF 10 ITEMS -->
+  <div class="modal-backdrop" id="photoTaskModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-camera text-gold"></i> Capture & Upload Photo Proof</h3>
+        <button class="modal-close" onclick="closeModal('photoTaskModal')">&times;</button>
+      </div>
+      <form id="photoTaskForm">
+        <p class="text-muted mb-3">Upload or capture a photo showing <strong>10 study items on your desk</strong> to claim <strong>⚡ 250 Coins</strong>!</p>
+        
+        <div class="file-upload-dropzone" onclick="document.getElementById('photoFileInput').click()">
+          <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2.5rem; color: var(--gold);"></i>
+          <p><strong>Click or Drag Photo Here</strong></p>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Supports JPG, PNG or Mobile Camera Photo</span>
+          <input type="file" id="photoFileInput" accept="image/*" class="hidden" onchange="handlePhotoUploadPreview(event)">
+        </div>
+
+        <div id="photoPreviewBox" class="mt-3 hidden text-center">
+          <img id="photoPreviewImg" src="" alt="Uploaded Photo" style="max-height: 180px; border-radius: var(--radius-md); border: 1px solid var(--border-glow);">
+          <p style="font-size: 0.8rem; color: var(--success); margin-top: 6px;">✓ Photo Captured & Ready!</p>
+        </div>
+
+        <div class="form-group mt-3">
+          <label>Item Description / Notes</label>
+          <input type="text" id="photoNotesInput" value="Desk setup with 10 study items (Notebooks, Calculator, Laptop, Pens, Water Flask)" placeholder="Describe items in photo...">
+        </div>
+
+        <div class="modal-actions mt-3">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('photoTaskModal')">Cancel</button>
+          <button type="submit" class="btn btn-gold"><i class="fa-solid fa-upload"></i> Upload Photo Proof & Claim 250 Coins</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE TASK MODAL 3: WRITE PARAGRAPH ESSAY -->
+  <div class="modal-backdrop" id="paragraphTaskModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-pen-nib text-gold"></i> Write Essay / Paragraph Quest</h3>
+        <button class="modal-close" onclick="closeModal('paragraphTaskModal')">&times;</button>
+      </div>
+      <form id="paragraphTaskForm">
+        <p class="text-muted mb-2">Write a <strong>100-word paragraph</strong> on <em>"How AI Technology Transforms Future Education"</em> to claim <strong>⚡ 180 Coins</strong>!</p>
+        
+        <div class="form-group">
+          <textarea id="paragraphTextarea" rows="6" placeholder="Write your paragraph essay here..." required oninput="updateWordCountMeter()"></textarea>
+          <div class="d-flex justify-content-between text-muted" style="font-size: 0.8rem; margin-top: 4px;">
+            <span>Minimum: 50 Words Required</span>
+            <span id="wordCountMeter">Word Count: 0 / 100</span>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('paragraphTaskModal')">Cancel</button>
+          <button type="submit" class="btn btn-gold"><i class="fa-solid fa-paper-plane"></i> Submit Paragraph & Claim 180 Coins</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE TASK MODAL 4: DRAW DIAGRAM CANVAS -->
+  <div class="modal-backdrop" id="drawingTaskModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-paintbrush text-gold"></i> Draw Science Diagram Quest</h3>
+        <button class="modal-close" onclick="closeModal('drawingTaskModal')">&times;</button>
+      </div>
+      <form id="drawingTaskForm">
+        <p class="text-muted mb-2">Draw a science diagram on the canvas below to claim <strong>⚡ 220 Coins</strong>!</p>
+        
+        <!-- Canvas Drawing Tool -->
+        <div class="canvas-drawing-wrapper">
+          <div class="canvas-controls mb-2">
+            <input type="color" id="drawColorPicker" value="#6366f1" title="Pick Brush Color">
+            <button type="button" class="btn btn-sm btn-secondary" onclick="clearDrawingCanvas()"><i class="fa-solid fa-eraser"></i> Clear Canvas</button>
+          </div>
+          <canvas id="drawingCanvas" width="450" height="200" style="background: #1e293b; border: 1px solid var(--border-glow); border-radius: var(--radius-md); cursor: crosshair; touch-action: none;"></canvas>
+        </div>
+
+        <div class="modal-actions mt-3">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('drawingTaskModal')">Cancel</button>
+          <button type="submit" class="btn btn-gold"><i class="fa-solid fa-check"></i> Submit Drawing & Claim 220 Coins</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD CUSTOM TASK -->
+  <div class="modal-backdrop" id="addTaskModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-plus-circle text-gold"></i> Create Custom Task</h3>
+        <button class="modal-close" id="closeAddTaskModalBtn">&times;</button>
+      </div>
+      <form id="createTaskForm">
+        <div class="form-group"><label>Task Title *</label><input type="text" id="newTaskTitle" required></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Category</label>
+            <select id="newTaskCategory">
+              <option value="Academic">🎓 Academic</option>
+              <option value="General">📌 General</option>
+              <option value="Fitness">🏋️ Fitness</option>
+              <option value="Coding">💻 Coding</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Task Type</label>
+            <select id="newTaskType">
+              <option value="standard">Standard Task</option>
+              <option value="quiz">Interactive Math Quiz</option>
+              <option value="photo">Photo Upload</option>
+              <option value="paragraph">Paragraph Essay</option>
+              <option value="drawing">Drawing Sketch</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Reward Coins 🪙</label><input type="number" id="newTaskCoins" value="100" required></div>
+          <div class="form-group"><label>Due Date</label><input type="text" id="newTaskDueDate" placeholder="Today"></div>
+        </div>
+        <div class="form-group"><label>Description</label><textarea id="newTaskDesc" rows="2"></textarea></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancelAddTaskBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Create Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: REDEEM REWARD CHECKOUT -->
+  <div class="modal-backdrop" id="claimRewardModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-cart-shopping text-gold"></i> Confirm Item Purchase</h3>
+        <button class="modal-close" id="closeClaimModalBtn">&times;</button>
+      </div>
+      <div class="reward-checkout-preview" id="checkoutPreview"></div>
+      <form id="confirmClaimForm">
+        <input type="hidden" id="claimRewardId">
+        <div class="form-group"><label>Student Name *</label><input type="text" id="claimStudentName" required></div>
+        <div class="form-row">
+          <div class="form-group"><label>Phone Contact *</label><input type="text" id="claimPhone" required></div>
+          <div class="form-group"><label>Campus Email</label><input type="email" id="claimEmail"></div>
+        </div>
+        <div class="form-group"><label>Delivery / Dorm Address *</label><input type="text" id="claimAddress" required></div>
+        <div class="form-group"><label>Delivery Notes</label><input type="text" id="claimNotes"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancelClaimBtn">Cancel</button>
+          <button type="submit" class="btn btn-gold" id="submitClaimBtn"><i class="fa-solid fa-coins"></i> Confirm Purchase & Deduct Coins</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CELEBRATION COINS EARNED -->
+  <div class="modal-backdrop" id="celebrationModal">
+    <div class="modal-card text-center celebration-card">
+      <div class="celebration-icon"><i class="fa-solid fa-trophy coin-bounce"></i></div>
+      <h2>Quest Complete! 🎉</h2>
+      <p class="celebration-subtitle">Great job staying productive!</p>
+      <div class="claimed-coins-badge"><i class="fa-solid fa-coins"></i> +<span id="earnedCoinsAmount">150</span> Coins Claimed!</div>
+      <p id="celebrationSubtext">New total: <strong><span id="newBalanceAmount">1,400</span> Coins</strong>.</p>
+      <div id="levelUpNotice" class="level-up-notice hidden">🎉 LEVEL UP! Level <span id="newLevelNoticeNum">3</span>!</div>
+      <button class="btn btn-primary w-100" id="closeCelebrationBtn">Awesome! Continue</button>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- JavaScript -->
+  <script src="script.js"></script>
 </body>
 </html>

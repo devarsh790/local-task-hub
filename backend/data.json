@@ -1,0 +1,260 @@
+{
+  "user": {
+    "role": "student",
+    "name": "Alex Chen",
+    "major": "Computer Science & Engineering",
+    "studentId": "STU-2026-9482",
+    "email": "alex.chen@university.edu",
+    "phone": "+1 (555) 234-5678",
+    "address": "Dorm Block B, Room 402, Campus Quad",
+    "level": 2,
+    "levelTitle": "Scholar Adventurer",
+    "xp": 960,
+    "xpToNextLevel": 1000,
+    "coins": 250,
+    "totalCoinsEarned": 2900,
+    "streak": 5,
+    "lastDailyClaim": "2026-09-30",
+    "badges": [
+      "First Quest Completed",
+      "Study Streak 5x",
+      "Tech Pioneer",
+      "Book Worm"
+    ]
+  },
+  "admin": {
+    "username": "admin",
+    "password": "admin123",
+    "name": "Prof. Marcus Vance (Admin)",
+    "role": "admin"
+  },
+  "tasks": [
+    {
+      "id": "task-quiz-1",
+      "title": "Solve 5-Question Basic Math & Science Quiz",
+      "type": "quiz",
+      "category": "Academic",
+      "coins": 200,
+      "difficulty": "Medium",
+      "dueDate": "Today, 6:00 PM",
+      "description": "Complete all 5 math questions correctly to test your problem solving speed.",
+      "completed": true,
+      "createdAt": "2026-10-01T08:00:00Z",
+      "completedAt": "2026-09-30T19:49:54.694Z"
+    },
+    {
+      "id": "task-photo-1",
+      "title": "Capture & Upload Photo of 10 Study Items on Desk",
+      "type": "photo",
+      "category": "General",
+      "coins": 250,
+      "difficulty": "Hard",
+      "dueDate": "Today, 9:00 PM",
+      "description": "Take a clear picture of your organized study desk showing notebooks, pens & tech gear.",
+      "completed": true,
+      "createdAt": "2026-10-01T09:00:00Z",
+      "completedAt": "2026-09-30T19:52:46.721Z"
+    },
+    {
+      "id": "task-para-1",
+      "title": "Write a 100-Word Essay on 'AI in Future Education'",
+      "type": "paragraph",
+      "category": "Academic",
+      "coins": 180,
+      "difficulty": "Medium",
+      "dueDate": "Tomorrow, 5:00 PM",
+      "description": "Write a thoughtful paragraph discussing how AI technology will transform learning.",
+      "completed": false,
+      "createdAt": "2026-10-01T10:00:00Z"
+    },
+    {
+      "id": "task-draw-1",
+      "title": "Draw a Science Diagram & Upload Picture/Canvas",
+      "type": "drawing",
+      "category": "Academic",
+      "coins": 220,
+      "difficulty": "Epic",
+      "dueDate": "Tomorrow, 8:00 PM",
+      "description": "Use the drawing pad or upload a photo of your handwritten science diagram.",
+      "completed": false,
+      "createdAt": "2026-10-01T11:00:00Z"
+    },
+    {
+      "id": "task-5",
+      "title": "Clean & Sanitize Study Desk & Setup",
+      "type": "standard",
+      "category": "General",
+      "coins": 50,
+      "difficulty": "Easy",
+      "dueDate": "Today, 10:00 PM",
+      "description": "Organize notebook files, sanitize workspace, recharge devices.",
+      "completed": true,
+      "completedAt": "2026-10-01T10:15:00Z",
+      "createdAt": "2026-10-01T08:30:00Z"
+    }
+  ],
+  "submissions": [
+    {
+      "id": "sub-1790797966721",
+      "taskId": "task-photo-1",
+      "taskTitle": "Capture & Upload Photo of 10 Study Items on Desk",
+      "studentName": "Alex Chen",
+      "type": "photo",
+      "proof": "Uploaded Desk Photo: Desk setup with 10 study items (Notebooks, Calculator, Laptop, Pens, Water Flask)",
+      "coinsEarned": 250,
+      "submittedAt": "2026-09-30T19:52:46.721Z"
+    },
+    {
+      "id": "sub-1790797794694",
+      "taskId": "task-quiz-1",
+      "taskTitle": "Solve 5-Question Basic Math & Science Quiz",
+      "studentName": "Alex Chen",
+      "type": "quiz",
+      "proof": "Passed Math & Science Quiz with score 100% (Q1:155, Q2:150, Q3:11, Q4:90, Q5:42)",
+      "coinsEarned": 200,
+      "submittedAt": "2026-09-30T19:49:54.694Z"
+    },
+    {
+      "id": "sub-101",
+      "taskId": "task-5",
+      "taskTitle": "Clean & Sanitize Study Desk & Setup",
+      "studentName": "Alex Chen",
+      "type": "standard",
+      "coinsEarned": 50,
+      "submittedAt": "2026-10-01T10:15:00Z",
+      "proof": "Cleaned and sanitized desk area."
+    }
+  ],
+  "rewards": [
+    {
+      "id": "rew-1",
+      "title": "Best-Seller Academic & Self-Growth Book Set",
+      "category": "Books & Study",
+      "coins": 600,
+      "image": "assets/reward_books.png",
+      "badge": "POPULAR",
+      "stock": 14,
+      "description": "Set of 3 inspirational academic excellence books curated for university students.",
+      "deliveryType": "Physical Delivery"
+    },
+    {
+      "id": "rew-2",
+      "title": "Custom Student Oversized Cotton Hoodie & T-Shirt",
+      "category": "Apparel",
+      "coins": 850,
+      "image": "assets/reward_tshirt.png",
+      "badge": "BESTSELLER",
+      "stock": 19,
+      "description": "High-grade 100% heavy cotton graphic streetwear student t-shirt.",
+      "deliveryType": "Physical Delivery"
+    },
+    {
+      "id": "rew-3",
+      "title": "Studio Wireless Over-Ear Active Headphones",
+      "category": "Tech & Audio",
+      "coins": 2200,
+      "image": "assets/reward_headphones.png",
+      "badge": "PREMIUM",
+      "stock": 8,
+      "description": "Deep bass, 40-hour battery life, active noise cancellation.",
+      "deliveryType": "Physical Delivery"
+    },
+    {
+      "id": "rew-4",
+      "title": "Noise-Canceling True Wireless Earbuds",
+      "category": "Tech & Audio",
+      "coins": 1600,
+      "image": "assets/reward_earphones.png",
+      "badge": "HOT",
+      "stock": 12,
+      "description": "Ultra-compact ergonomic wireless earbuds with crisp audio.",
+      "deliveryType": "Physical Delivery"
+    },
+    {
+      "id": "rew-5",
+      "title": "Ergonomic Student Laptop Backpack with USB Port",
+      "category": "Gear",
+      "coins": 1400,
+      "image": "assets/reward_backpack.png",
+      "badge": "ESSENTIAL",
+      "stock": 10,
+      "description": "Water-resistant tech backpack with dedicated 15.6-inch laptop compartment.",
+      "deliveryType": "Physical Delivery"
+    },
+    {
+      "id": "rew-6",
+      "title": "Stainless Steel Thermal Water Flask & Desk Tumbler",
+      "category": "Gear",
+      "coins": 500,
+      "image": "assets/reward_flask.png",
+      "badge": "MUST HAVE",
+      "stock": 25,
+      "description": "Keep coffee hot for 12 hours or water ice-cold during study hours.",
+      "deliveryType": "Physical Delivery"
+    }
+  ],
+  "claims": [
+    {
+      "id": "CLM-38006",
+      "rewardTitle": "Best-Seller Academic & Self-Growth Book Set",
+      "category": "Books & Study",
+      "coinsSpent": 600,
+      "itemWorth": 600,
+      "image": "assets/reward_books.png",
+      "status": "Processing",
+      "claimedAt": "2026-09-30T19:53:28.026Z",
+      "code": "SHIP-3390-8026",
+      "studentName": "Alex Chen",
+      "email": "alex.chen@university.edu",
+      "phone": "+1 (555) 234-5678",
+      "address": "Dorm Block B, Room 402, Campus Quad",
+      "notes": ""
+    },
+    {
+      "id": "CLM-69116",
+      "rewardTitle": "Custom Student Oversized Cotton Hoodie & T-Shirt",
+      "category": "Apparel",
+      "coinsSpent": 850,
+      "itemWorth": 850,
+      "image": "assets/reward_tshirt.png",
+      "status": "Processing",
+      "claimedAt": "2026-09-30T19:53:18.458Z",
+      "code": "SHIP-8675-8458",
+      "studentName": "Alex Chen",
+      "email": "alex.chen@university.edu",
+      "phone": "+1 (555) 234-5678",
+      "address": "Dorm Block B, Room 402, Campus Quad",
+      "notes": ""
+    },
+    {
+      "id": "CLM-88912",
+      "rewardId": "rew-7",
+      "rewardTitle": "Campus Cafe $10 Digital Coffee Gift Voucher",
+      "coinsSpent": 350,
+      "itemWorth": 350,
+      "status": "Delivered",
+      "claimedAt": "2026-09-28T14:20:00Z",
+      "code": "VOUCHER-9923-88912",
+      "studentName": "Alex Chen",
+      "email": "alex.chen@university.edu",
+      "phone": "+1 (555) 234-5678",
+      "address": "Dorm Block B, Room 402",
+      "deliveryType": "Digital Pass"
+    },
+    {
+      "id": "CLM-88955",
+      "rewardId": "rew-6",
+      "rewardTitle": "Stainless Steel Thermal Water Flask & Desk Tumbler",
+      "coinsSpent": 500,
+      "itemWorth": 500,
+      "status": "Shipped",
+      "claimedAt": "2026-09-29T16:10:00Z",
+      "code": "SHIP-4402-88955",
+      "studentName": "Alex Chen",
+      "email": "alex.chen@university.edu",
+      "phone": "+1 (555) 234-5678",
+      "address": "Dorm Block B, Room 402",
+      "deliveryType": "Physical Delivery"
+    }
+  ]
+}
